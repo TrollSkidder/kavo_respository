@@ -775,7 +775,7 @@ local themeList = config.Theme and config["Theme"] or {}
                 end)()
                 
                 ButtonFunction["UpdateButton"] = function(config)
-                local newTitle = config.Title and config["Title"] or error("\nUpdateButton - Missing Title = "" ")
+                local newTitle = config.Title and config["Title"] or error("\nUpdateButton - Missing Function (Title) ")
                     btnInfo.Text = newTitle
                 end
                 return ButtonFunction

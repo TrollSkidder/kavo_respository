@@ -393,7 +393,7 @@ function Kavo:CreateLib(Settings)
     local first = true
 
     function Tabs:MakeTab(Settings)
-    local tabName = settings.Name or "Tab's Name"
+    local tabName = Settings.Name or "Tab's Name"
         
         local tabButton = Instance.new("TextButton")
         local UICorner = Instance.new("UICorner")
@@ -493,9 +493,9 @@ function Kavo:CreateLib(Settings)
             end
         end)()
         
-        function Sections:MakeSection(settings)
-        local secName = settings.Name or "Section"
-        local hidden = settings.Hidden or false
+        function Sections:MakeSection(Settings)
+        local secName = Settings.Name or "Section"
+        local hidden = Settings.Hidden or false
         
             
             local sectionFunctions = {}

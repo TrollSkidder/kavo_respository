@@ -7,19 +7,7 @@ local run = game:GetService("RunService")
 
 local Utility = {}
 local Objects = {}
-local Task = {
-        RunCode = function(func)
-           task.spawn(function()
-		      spawn(function()
-			     pcall(function()
-				     loadstring(
-					    func()
-				     )()
-			      end)
-		   end)
-	end)
-end
-}
+
 
 function Kavo:DraggingEnabled(frame, parent)
         
@@ -164,7 +152,6 @@ function Kavo:ToggleUI()
 end
 
 function Kavo:CreateLib(Settings)
-Task.RunCode(function()
     local kavName = Settings.Name or "KavoUi"
     local themeList = Settings.Theme or {}
     local intro = Settings.Intro or false
@@ -214,8 +201,6 @@ Task.RunCode(function()
             v:Destroy()
         end
     end
-end)
-end
     
     local ScreenGui = Instance.new("ScreenGui")
     local Main = Instance.new("Frame")
@@ -396,7 +381,8 @@ end
        tween:Create(introtext, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1}):Play()
 	   wait(1.5)
 	   Main.Visible = true
-   end
+     end
+ end
 
    if Settings.Intro then
       IntroFunction()

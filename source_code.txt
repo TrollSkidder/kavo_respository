@@ -1,4 +1,6 @@
-local Kavo = {}
+local Kavo = {
+        Flags = {}
+}
 
 local tween = game:GetService("TweenService")
 local tweeninfo = TweenInfo.new
@@ -8,6 +10,11 @@ local run = game:GetService("RunService")
 local Utility = {}
 local Objects = {}
 
+local function Round(Number, Factor)
+	local Result = math.floor(Number/Factor + (math.sign(Number) * 0.5)) * Factor
+	if Result < 0 then Result = Result + Factor end
+	return Result
+end
 
 function Kavo:DraggingEnabled(frame, parent)
         
@@ -190,9 +197,9 @@ function Kavo:CreateLib(Settings)
         end
     end
 
-    themeList = themeList or {}
+    
     local selectedTab 
-    kavName = kavName or "Library"
+    
     table.insert(Kavo, kavName)
     for i,v in pairs(game.CoreGui:GetChildren()) do
         if v:IsA("ScreenGui") and v.Name == kavName then
@@ -379,12 +386,15 @@ function Kavo:CreateLib(Settings)
             themeList.ElementColor = color
         end
     end
+    
+    -- Wogo
     local Tabs = {}
 
     local first = true
 
-    function Tabs:NewTab(tabName)
-        tabName = tabName or "Tab"
+    function Tabs:MakeTab(Settings)
+    local tabName = settings.Name or "Tab's Name"
+        
         local tabButton = Instance.new("TextButton")
         local UICorner = Instance.new("UICorner")
         local page = Instance.new("ScrollingFrame")
@@ -482,12 +492,15 @@ function Kavo:CreateLib(Settings)
                 tabButton.BackgroundColor3 = themeList.SchemeColor
             end
         end)()
-    
-        function Sections:NewSection(secName, hidden)
-            secName = secName or "Section"
+        
+        function Sections:MakeSection(settings)
+        local secName = settings.Name or "Section"
+        local hidden = settings.Hidden or false
+        
+            
             local sectionFunctions = {}
             local modules = {}
-	    hidden = hidden or false
+	    
             local sectionFrame = Instance.new("Frame")
             local sectionlistoknvm = Instance.new("UIListLayout")
             local sectionHead = Instance.new("Frame")
@@ -587,13 +600,13 @@ function Kavo:CreateLib(Settings)
                 updateSectionFrame()
                 UpdateSize()
             local Elements = {}
-            function Elements:NewButton(bname,tipINf, callback)
-                showLogo = showLogo or true
+            function Elements:NewButton(Settings)
+            local bname = Settings.Name or "Button"
+            local tipINf = Settings.Desc or "Desc"
+            local callback= Settings.CallBack or function() end
+                
                 local ButtonFunction = {}
-                tipINf = tipINf or "Tip: Clicking this nothing will happen!"
-                bname = bname or "Click Me!"
-                callback = callback or function() end
-
+                
                 local buttonElement = Instance.new("TextButton")
                 local UICorner = Instance.new("UICorner")
                 local btnInfo = Instance.new("TextLabel")
@@ -782,16 +795,21 @@ function Kavo:CreateLib(Settings)
                     end
                 end)()
                 
-                function ButtonFunction:UpdateButton(newTitle)
+                function ButtonFunction:UpdateButton(Settings)
+                  local newTitle = Settings.NewName or "NewName"
                     btnInfo.Text = newTitle
                 end
                 return ButtonFunction
             end
 
-            function Elements:NewTextBox(tname, tTip, callback)
-                tname = tname or "Textbox"
-                tTip = tTip or "Gets a value of Textbox"
-                callback = callback or function() end
+            function Elements:NewTextBox(Settings)
+             local tname = Settings.Name or "Textbox"
+             local tTip = Settings.Desc or "Desc"
+             local def = Settings.Default or ""
+             local phtext = Settings.PlaceHolder or "Type here!"
+             local textdis = Settings.TextDisappear or true
+             local callback = Settings.CallBack or function() end
+                
                 local textboxElement = Instance.new("TextButton")
                 local UICorner = Instance.new("UICorner")
                 local viewInfo = Instance.new("ImageButton")
@@ -848,7 +866,7 @@ function Kavo:CreateLib(Settings)
                 TextBox.ClearTextOnFocus = false
                 TextBox.Font = Enum.Font.Gotham
                 TextBox.PlaceholderColor3 = Color3.fromRGB(themeList.SchemeColor.r * 255 - 19, themeList.SchemeColor.g * 255 - 26, themeList.SchemeColor.b * 255 - 35)
-                TextBox.PlaceholderText = "Type here!"
+                TextBox.PlaceholderText = ""..phtext
                 TextBox.Text = ""
                 TextBox.TextColor3 = themeList.SchemeColor
                 TextBox.TextSize = 12.000
@@ -898,7 +916,9 @@ function Kavo:CreateLib(Settings)
 
                 updateSectionFrame()
                                 UpdateSize()
-            
+                                
+                TextBox.Text = def
+                
                 local btn = textboxElement
                 local infBtn = viewInfo
 
@@ -943,7 +963,9 @@ function Kavo:CreateLib(Settings)
                     else
                         callback(TextBox.Text)
                         wait(0.18)
-                        TextBox.Text = ""  
+                        if textdis then
+                        TextBox.Text = ""
+                        end
                     end
                 end)
 
@@ -984,12 +1006,15 @@ function Kavo:CreateLib(Settings)
                 end)()
             end 
 
-                function Elements:NewToggle(tname, nTip, callback)
+                function Elements:NewToggle(Settings)
+                local tname = Settings.Name or "Toggle"
+                local nTip = Setttings.Desc or "Desc"
+                local def = Settings.Default or false
+                local flag = Settings.Flag or nil
+                local callback = Settings.CallBack or function() end
+                
                     local TogFunction = {}
-                    tname = tname or "Toggle"
-                    nTip = nTip or "Prints Current Toggle State"
-                    callback = callback or function() end
-                    local toggled = false
+                    local toggled = {value = def}
                     table.insert(SettingsT, tname)
 
                     local toggleElement = Instance.new("TextButton")
@@ -1103,12 +1128,30 @@ function Kavo:CreateLib(Settings)
                     local img = toggleEnabled
                     local infBtn = viewInfo
 
-                                    updateSectionFrame()
-                UpdateSize()
-
+                    updateSectionFrame()
+                    UpdateSize()
+                    
+                    function toggley.set(value)
+                       if value then
+                      
+                            game.TweenService:Create(img, TweenInfo.new(0.11, Enum.EasingStyle.Linear,Enum.EasingDirection.In), {
+                                ImageTransparency = 0
+                            }):Play()
+                            pcall(callback, toggled.value)
+                        else
+                            
+                            game.TweenService:Create(img, TweenInfo.new(0.11, Enum.EasingStyle.Linear,Enum.EasingDirection.In), {
+                                ImageTransparency = 1
+                            }):Play()
+                            pcall(callback, toggled.value)
+                        end
+                    end
+                    
+                    toggley.set(toggled.value)
+                    
                     btn.MouseButton1Click:Connect(function()
                         if not focusing then
-                            if toggled == false then
+                            if toggled.value == false then
                                 game.TweenService:Create(img, TweenInfo.new(0.11, Enum.EasingStyle.Linear,Enum.EasingDirection.In), {
                                     ImageTransparency = 0
                                 }):Play()
@@ -1149,8 +1192,8 @@ function Kavo:CreateLib(Settings)
                                 end
                                 c:Destroy()
                             end
-                            toggled = not toggled
-                            pcall(callback, toggled)
+                            toggled.value = not toggled.value
+                            pcall(callback, toggled.value)
                         else
                             for i,v in next, infoContainer:GetChildren() do
                                 Utility:TweenObject(v, {Position = UDim2.new(0,0,2,0)}, 0.2)
@@ -1211,36 +1254,45 @@ function Kavo:CreateLib(Settings)
                             viewDe = false
                         end
                     end)
-                    function TogFunction:UpdateToggle(newText, isTogOn)
-                        isTogOn = isTogOn or toggle
+                    if flag then
+                        Kavo.Flags[flag] = toggled
+                     end
+                     
+                    function TogFunction:UpdateToggle(Settings)
+                    local newText = Settings.NewName or "NewName"
+                    local isTogOn = Settings.NewValue or nil
                         if newText ~= nil then 
                             togName.Text = newText
                         end
                         if isTogOn then
-                            toggled = true
+                            toggled.value = true
                             game.TweenService:Create(img, TweenInfo.new(0.11, Enum.EasingStyle.Linear,Enum.EasingDirection.In), {
                                 ImageTransparency = 0
                             }):Play()
-                            pcall(callback, toggled)
+                            pcall(callback, toggled.value)
                         else
-                            toggled = false
+                            toggled.value = false
                             game.TweenService:Create(img, TweenInfo.new(0.11, Enum.EasingStyle.Linear,Enum.EasingDirection.In), {
                                 ImageTransparency = 1
                             }):Play()
-                            pcall(callback, toggled)
+                            pcall(callback, toggled.value)
                         end
                     end
                     return TogFunction
             end
-
-            function Elements:NewSlider(slidInf, slidTip, maxvalue, minvalue, callback)
-                slidInf = slidInf or "Slider"
-                slidTip = slidTip or "Slider tip here"
-                maxvalue = maxvalue or 500
-                minvalue = minvalue or 16
-                startVal = startVal or 0
-                callback = callback or function() end
-
+            
+            -- Its has Harder To Revamp Slider Function, If You guys Dont use, im sad
+            function Elements:NewSlider(Settings)
+            local slidInf = Settings.Name or "Slider"
+            local slidTip = Settings.Desc or "Desc"
+            local maxvalue = Settings.Max or 500
+            local minvalue = Settings.Min or 16
+            local def = Settings.Default or 50
+            local flag = Settings.Flag or nil
+            local valna = Settings.ValueName or ""
+            local callback = Settings.CallBack or function() end
+            
+                local slidered = {value = def}
                 local sliderElement = Instance.new("TextButton")
                 local UICorner = Instance.new("UICorner")
                 local togName = Instance.new("TextLabel")
@@ -1474,7 +1526,18 @@ function Kavo:CreateLib(Settings)
                         wait(0)
                         viewDe = false
                     end
-                end)        
+                end)
+                if flag then
+                    Kavo.Flags[flag] = slidered
+                end
+                function slidery.set(Value)
+                   self.Value = math.clamp(Round(Value, 1), Settings.Min, Settings.Max)
+				    game.TweenService:Create(sliderDrag,TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{Size = UDim2.fromScale((self.Value - Settings.Min) / (Settings.Max - Settings.Min), 1)}):Play()
+					val.Text = tostring(self.Value) .. " " .. valna
+					callback(self.Value)
+			    end
+			
+			slidery.set(slidered.value)
             end
 
             function Elements:NewDropdown(dropname, dropinf, list, callback)

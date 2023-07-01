@@ -247,7 +247,8 @@ function Kavo:CreateLib(Settings)
     Main.ClipsDescendants = true
     Main.Position = UDim2.new(0.336503863, 0, 0.275485456, 0)
     Main.Size = UDim2.new(0, 525, 0, 318)
-
+    Main.Visible = true
+    
     MainCorner.CornerRadius = UDim.new(0, 4)
     MainCorner.Name = "MainCorner"
     MainCorner.Parent = Main
@@ -368,13 +369,14 @@ function Kavo:CreateLib(Settings)
     
     local function IntroFunction()
        Main.Visible = false
-       local introtext = Instance.new("TextLabel") do
+       local introtext = Instance.new("TextLabel")
        introtext.Parent = ScreenGui;
        introtext.Size = UDim2.new(1, 0, 1, 0);
        introtext.AnchorPoint = Vector2.new(0.5, 0.5);
        introtext.Position = UDim2.new(0.5, 19, 0.5, 0);
 	   introtext.TextXAlignment = Enum.TextXAlignment.Center;
 	   introtext.Text = ""..Settings.IntroSettings.Text
+	introtext.Font = Enum.Font.Code
 	   introtext.TextTransparency = 1
 	   tween:Create(introtext, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
 	   wait(2)
@@ -382,7 +384,6 @@ function Kavo:CreateLib(Settings)
 	   wait(1.5)
 	   Main.Visible = true
      end
- end
 
    if Settings.Intro then
       IntroFunction()

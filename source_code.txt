@@ -214,6 +214,7 @@ Task.RunCode(function()
             v:Destroy()
         end
     end
+end)
 end
     
     local ScreenGui = Instance.new("ScreenGui")

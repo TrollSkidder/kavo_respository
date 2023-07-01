@@ -154,8 +154,6 @@ end
 function Kavo:CreateLib(Settings)
     local kavName = Settings.Name or "KavoUi"
     local themeList = Settings.Theme or {}
-    local intro = Settings.Intro or false
-    local introText = Settings.IntroSettings.Text or "Kavo Ui Library"
     
     if not themeList then
         themeList = themes
@@ -367,28 +365,7 @@ function Kavo:CreateLib(Settings)
         end
     end)()
     
-    local function IntroFunction()
-       Main.Visible = false
-       local introtext = Instance.new("TextLabel")
-       introtext.Parent = ScreenGui;
-       introtext.Size = UDim2.new(1, 0, 1, 0);
-       introtext.AnchorPoint = Vector2.new(0.5, 0.5);
-       introtext.Position = UDim2.new(0.5, 19, 0.5, 0);
-	   introtext.TextXAlignment = Enum.TextXAlignment.Center;
-	   introtext.Text = ""..Settings.IntroSettings.Text
-	introtext.Font = Enum.Font.Code
-	   introtext.TextTransparency = 1
-	   tween:Create(introtext, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
-	   wait(2)
-       tween:Create(introtext, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1}):Play()
-	   wait(1.5)
-	   Main.Visible = true
-     end
-
-   if Settings.Intro then
-      IntroFunction()
-   end
-
+    
     function Kavo:ChangeColor(prope,color)
         if prope == "Background" then
             themeList.Background = color

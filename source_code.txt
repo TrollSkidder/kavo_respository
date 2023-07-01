@@ -7,6 +7,20 @@ local run = game:GetService("RunService")
 
 local Utility = {}
 local Objects = {}
+local Task = {
+        RunCode = function(func)
+           task.spawn(function()
+		      spawn(function()
+			     pcall(function()
+				     loadstring(
+					    func()
+				     )()
+			      end)
+		   end)
+	end)
+end
+}
+
 function Kavo:DraggingEnabled(frame, parent)
         
     parent = parent or frame
@@ -149,9 +163,13 @@ function Kavo:ToggleUI()
     end
 end
 
-Kavo["Window"] = function(config)
-local kavName = config.Name and config["Name"] or "Kavo Library"
-local themeList = config.Theme and config["Theme"] or {}
+function Kavo:CreateLib(Settings)
+Task.RunCode(function()
+    local kavName = Settings.Name or "KavoUi"
+    local themeList = Settings.Theme or {}
+    local intro = Settings.Intro or false
+    local introText = Settings.IntroSettings.Text or "Kavo Ui Library"
+    
     if not themeList then
         themeList = themes
     end
@@ -187,13 +205,17 @@ local themeList = config.Theme and config["Theme"] or {}
         end
     end
 
+    themeList = themeList or {}
     local selectedTab 
+    kavName = kavName or "Library"
     table.insert(Kavo, kavName)
     for i,v in pairs(game.CoreGui:GetChildren()) do
         if v:IsA("ScreenGui") and v.Name == kavName then
             v:Destroy()
         end
     end
+end
+    
     local ScreenGui = Instance.new("ScreenGui")
     local Main = Instance.new("Frame")
     local MainCorner = Instance.new("UICorner")
@@ -228,7 +250,10 @@ local themeList = config.Theme and config["Theme"] or {}
     ScreenGui.Name = LibName
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     ScreenGui.ResetOnSpawn = false
-
+  
+  
+   
+   
     Main.Name = "Main"
     Main.Active = true
     Main.Parent = ScreenGui
@@ -354,6 +379,27 @@ local themeList = config.Theme and config["Theme"] or {}
             coverup.BackgroundColor3 = themeList.Header
         end
     end)()
+    
+    local function IntroFunction()
+       Main.Visible = false
+       local introtext = Instance.new("TextLabel") do
+       introtext.Parent = ScreenGui;
+       introtext.Size = UDim2.new(1, 0, 1, 0);
+       introtext.AnchorPoint = Vector2.new(0.5, 0.5);
+       introtext.Position = UDim2.new(0.5, 19, 0.5, 0);
+	   introtext.TextXAlignment = Enum.TextXAlignment.Center;
+	   introtext.Text = ""..Settings.IntroSettings.Text
+	   introtext.TextTransparency = 1
+	   tween:Create(introtext, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+	   wait(2)
+       tween:Create(introtext, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1}):Play()
+	   wait(1.5)
+	   Main.Visible = true
+   end
+
+   if Settings.Intro then
+      IntroFunction()
+   end
 
     function Kavo:ChangeColor(prope,color)
         if prope == "Background" then
@@ -372,9 +418,8 @@ local themeList = config.Theme and config["Theme"] or {}
 
     local first = true
 
-    Tabs["CreateTab"] = function(config)
-    local tabName = config.Title and config["Title"] or "Tab"
-    
+    function Tabs:NewTab(tabName)
+        tabName = tabName or "Tab"
         local tabButton = Instance.new("TextButton")
         local UICorner = Instance.new("UICorner")
         local page = Instance.new("ScrollingFrame")
@@ -473,10 +518,8 @@ local themeList = config.Theme and config["Theme"] or {}
             end
         end)()
     
-        Sections["CreateSection"] = function(config)
-        local secName = config.Title and config["Title"] or "Section Example"
-        local hidden = config.Hidden and config["Hidden"] or false
-            
+        function Sections:NewSection(secName, hidden)
+            secName = secName or "Section"
             local sectionFunctions = {}
             local modules = {}
 	    hidden = hidden or false
@@ -579,13 +622,13 @@ local themeList = config.Theme and config["Theme"] or {}
                 updateSectionFrame()
                 UpdateSize()
             local Elements = {}
-            Elements["Button"] = function(config)
-            local bname = config.Text and config["Text"] or "Button Example"
-            local tipINf = config.TextDesc and config["TextDesc"] or "Info Example"
-            local callback = config.CallBack and config["CallBack"] or function() print("Button Example CallBack") end
-                
+            function Elements:NewButton(bname,tipINf, callback)
+                showLogo = showLogo or true
                 local ButtonFunction = {}
-                
+                tipINf = tipINf or "Tip: Clicking this nothing will happen!"
+                bname = bname or "Click Me!"
+                callback = callback or function() end
+
                 local buttonElement = Instance.new("TextButton")
                 local UICorner = Instance.new("UICorner")
                 local btnInfo = Instance.new("TextLabel")
@@ -593,7 +636,7 @@ local themeList = config.Theme and config["Theme"] or {}
                 local touch = Instance.new("ImageLabel")
                 local Sample = Instance.new("ImageLabel")
 
-                table.insert(Kavo, bname)
+                table.insert(modules, bname)
 
                 buttonElement.Name = bname
                 buttonElement.Parent = sectionInners
@@ -774,20 +817,16 @@ local themeList = config.Theme and config["Theme"] or {}
                     end
                 end)()
                 
-                ButtonFunction["UpdateButton"] = function(config)
-                local newTitle = config.Title and config["Title"] or error("\nUpdateButton - Missing Function (Title) ")
+                function ButtonFunction:UpdateButton(newTitle)
                     btnInfo.Text = newTitle
                 end
                 return ButtonFunction
             end
 
-            Elements["TextBox"] = function(config)
-            local tname = config.Text and config["Text"] or "TextBox"
-            local tTip = config.TextDesc and config["TextDesc"] or "Gets Somethin"
-            local def = config.Default and config["Default"] or ""
-            local phtext = config.PlaceHolder and config["PlaceHolder"] or "Type here!"
-            local callback = config.CallBack and config["CallBack"] or function(a) game.Players.LocalPlayer:Kick("You Have Been Banned - Reason:" .. a) end
-                
+            function Elements:NewTextBox(tname, tTip, callback)
+                tname = tname or "Textbox"
+                tTip = tTip or "Gets a value of Textbox"
+                callback = callback or function() end
                 local textboxElement = Instance.new("TextButton")
                 local UICorner = Instance.new("UICorner")
                 local viewInfo = Instance.new("ImageButton")
@@ -844,7 +883,7 @@ local themeList = config.Theme and config["Theme"] or {}
                 TextBox.ClearTextOnFocus = false
                 TextBox.Font = Enum.Font.Gotham
                 TextBox.PlaceholderColor3 = Color3.fromRGB(themeList.SchemeColor.r * 255 - 19, themeList.SchemeColor.g * 255 - 26, themeList.SchemeColor.b * 255 - 35)
-                TextBox.PlaceholderText = ""..phtext
+                TextBox.PlaceholderText = "Type here!"
                 TextBox.Text = ""
                 TextBox.TextColor3 = themeList.SchemeColor
                 TextBox.TextSize = 12.000
@@ -880,7 +919,7 @@ local themeList = config.Theme and config["Theme"] or {}
                 moreInfo.TextColor3 = Color3.fromRGB(255, 255, 255)
                 moreInfo.TextSize = 14.000
                 moreInfo.TextXAlignment = Enum.TextXAlignment.Left
-                
+
                 if themeList.SchemeColor == Color3.fromRGB(255,255,255) then
                     Utility:TweenObject(moreInfo, {TextColor3 = Color3.fromRGB(0,0,0)}, 0.2)
                 end 
@@ -894,9 +933,7 @@ local themeList = config.Theme and config["Theme"] or {}
 
                 updateSectionFrame()
                                 UpdateSize()
-                
-                TextBox.Text = def
-                
+            
                 local btn = textboxElement
                 local infBtn = viewInfo
 
@@ -927,9 +964,7 @@ local themeList = config.Theme and config["Theme"] or {}
                         hovering = false
                     end
                 end)
-                
-                
-                
+
                 TextBox.FocusLost:Connect(function(EnterPressed)
                     if focusing then
                         for i,v in next, infoContainer:GetChildren() do

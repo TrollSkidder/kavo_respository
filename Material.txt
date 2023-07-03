@@ -648,7 +648,7 @@ function TryAddMenu(Object, Menu, ReturnTable)
 		MenuPadding.PaddingBottom = UDim.new(0,2)
 		MenuPadding.Parent = MenuContent
 
-		MenuButton.MouseButton1Down:Connect(function()
+		MenuButton.MouseButton1Click:Connect(function()
 			MenuToggle = not MenuToggle
 			TweenService:Create(MenuBuild, TweenInfo.new(0.15), {Size = MenuToggle and UDim2.fromOffset(120,Size) or UDim2.fromOffset(120,0)}):Play()
 		end)
@@ -680,7 +680,7 @@ function TryAddMenu(Object, Menu, ReturnTable)
 				OptionValue.TextXAlignment = Enum.TextXAlignment.Right
 				OptionValue.Parent = MenuOption
 
-				MenuOption.MouseButton1Down:Connect(function()
+				MenuOption.MouseButton1Click:Connect(function()
 					Value(ReturnTable)
 					MenuToggle = false
 					TweenService:Create(MenuBuild, TweenInfo.new(0.15), {Size = UDim2.fromOffset(120,0)}):Play()
@@ -732,7 +732,7 @@ function CreateNewButton(ButtonConfig, Parent)
 	TweenService:Create(ButtonShadow, TweenInfo.new(0.5), {ImageTransparency = 0}):Play()
 	TweenService:Create(ButtonLabel, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
 
-	Button.MouseButton1Down:Connect(function()
+	Button.MouseButton1Click:Connect(function()
 		CircleAnim(ButtonLabel, ThisTheme.ButtonAccent, ThisTheme.Button)
 		ButtonCallback()
 	end)
@@ -849,7 +849,7 @@ function Material.Load(Config)
 	MinimiseShadow.ImageTransparency = 1
 	MinimiseShadow.Parent = MinimiseButton
 
-	MinimiseButton.MouseButton1Down:Connect(function()
+	MinimiseButton.MouseButton1Click:Connect(function()
 		Open = not Open
 		TweenService:Create(MainShadow, TweenInfo.new(0.15), {ImageTransparency = 1}):Play()
 		TweenService:Create(MainFrame, TweenInfo.new(0.15), {Size = Open and UDim2.fromOffset(SizeX,SizeY) or UDim2.fromOffset(SizeX,30)}):Play()
@@ -904,7 +904,7 @@ function Material.Load(Config)
 
 		local MenuToggle = false
 
-		NavBarMenu.MouseButton1Down:Connect(function()
+		NavBarMenu.MouseButton1Click:Connect(function()
 			MenuToggle = not MenuToggle
 			TweenService:Create(NavigationBar, TweenInfo.new(0.15), {Size = (MenuToggle and UDim2.fromScale(0.5,1) or UDim2.fromScale(0,1)) - UDim2.fromOffset(0,30)}):Play()
 			TweenService:Create(NavBarOverlay, TweenInfo.new(0.15), {BackgroundTransparency = MenuToggle and 0.5 or 1}):Play()
@@ -1024,7 +1024,7 @@ function Material.Load(Config)
 				OptionLabel.ZIndex = 80
 				OptionLabel.Parent = OptionItem
 
-				OptionItem.MouseButton1Down:Connect(function()
+				OptionItem.MouseButton1Click:Connect(function()
 					Value()
 					CircleAnim(OptionItem, Theme.Banner)
 				end)
@@ -1112,7 +1112,7 @@ function Material.Load(Config)
 		table.insert(ButtonTrack, Button)
 		table.insert(PageTrack, PageContentFrame)
 
-		Button.MouseButton1Down:Connect(function()
+		Button.MouseButton1Click:Connect(function()
 			for _, Track in next, ButtonTrack do
 				if not (Track == Button) then
 					TweenService:Create(Track, TweenInfo.new(0.15), {TextTransparency = 0.5}):Play()
@@ -1248,14 +1248,14 @@ function Material.Load(Config)
 				}, DropdownContent)
 
 				NewButton.Size = UDim2.fromScale(1,0) + UDim2.fromOffset(0,20)
-				NewButton.MouseButton1Down:Connect(function()
+				NewButton.MouseButton1Click:Connect(function()
 					DropdownCallback(Value)
 					DropdownTitle.Text = DropdownText..": "..Value
                     DropdownValue = Value
 				end)
 			end)
 
-			DropdownTitle.MouseButton1Down:Connect(function()
+			DropdownTitle.MouseButton1Click:Connect(function()
 				DropToggle = not DropToggle
 				TweenService:Create(DropdownButton, TweenInfo.new(0.15), {Rotation = DropToggle and 135 or 0}):Play()
 				TweenService:Create(DropdownContent, TweenInfo.new(0.15), {Size = DropToggle and DropdownSize or UDim2.fromScale(1,0)}):Play()
@@ -1313,7 +1313,7 @@ function Material.Load(Config)
 					}, DropdownContent)
 
 					NewButton.Size = UDim2.fromScale(1,0) + UDim2.fromOffset(0,20)
-					NewButton.MouseButton1Down:Connect(function()
+					NewButton.MouseButton1Click:Connect(function()
 						DropdownCallback(Value)
 						DropdownTitle.Text = DropdownText..": "..Value
                         DropdownValue = Value
@@ -1429,7 +1429,7 @@ function Material.Load(Config)
 						ChipMenu = MenuButton
 					end
 
-					ChipItem.MouseButton1Down:Connect(function()
+					ChipItem.MouseButton1Click:Connect(function()
 						BuildTable[Key] = not BuildTable[Key]
 						local Enabled = BuildTable[Key]
 						TweenService:Create(ChipItem, TweenInfo.new(0.15), {ImageColor3 = Enabled and Theme.ChipSet or Theme.ChipSetAccent}):Play()
@@ -1538,7 +1538,7 @@ function Material.Load(Config)
 							ChipMenu = MenuButton
 						end
 
-						ChipItem.MouseButton1Down:Connect(function()
+						ChipItem.MouseButton1Click:Connect(function()
 							BuildTable[Key] = not BuildTable[Key]
 							local Enabled = BuildTable[Key]
 							TweenService:Create(ChipItem, TweenInfo.new(0.15), {ImageColor3 = Enabled and Theme.ChipSet or Theme.ChipSetAccent}):Play()
@@ -1674,7 +1674,7 @@ function Material.Load(Config)
 						DataMenu = MenuButton
 					end
 
-					DataItem.MouseButton1Down:Connect(function()
+					DataItem.MouseButton1Click:Connect(function()
 						BuildTable[Key] = not BuildTable[Key]
 						local Enabled = BuildTable[Key]
 						TweenService:Create(DataItem, TweenInfo.new(0.15), {ImageTransparency = Enabled and 0.8 or 0, ImageColor3 = Enabled and Theme.DataTable or Theme.DataTableAccent}):Play()
@@ -1789,7 +1789,7 @@ function Material.Load(Config)
 							DataMenu = MenuButton
 						end
 
-						DataItem.MouseButton1Down:Connect(function()
+						DataItem.MouseButton1Click:Connect(function()
 							BuildTable[Key] = not BuildTable[Key]
 							local Enabled = BuildTable[Key]
 							TweenService:Create(DataItem, TweenInfo.new(0.15), {ImageTransparency = Enabled and 0.8 or 0, ImageColor3 = Enabled and Theme.DataTable or Theme.DataTableAccent}):Play()
@@ -1827,7 +1827,7 @@ function Material.Load(Config)
 			ColorPicker.ClipsDescendants = true
 			ColorPicker.Parent = PageContentFrame
 
-			ColorPicker.MouseButton1Down:Connect(function()
+			ColorPicker.MouseButton1Click:Connect(function()
 				ColorPickerToggle = not ColorPickerToggle
 				TweenService:Create(ColorPicker, TweenInfo.new(0.15), {Size = UDim2.fromScale(1,0) + (ColorPickerToggle and UDim2.fromOffset(0,115) or UDim2.fromOffset(0,40))}):Play()
 			end)
@@ -2161,7 +2161,7 @@ function Material.Load(Config)
 			TweenService:Create(Dot, TweenInfo.new(0.15), {Position = (ToggleDefault and UDim2.fromScale(1,0.5) or UDim2.fromScale(0,0.5)) - UDim2.fromOffset(8,8), ImageColor3 = ToggleDefault and Theme.Toggle or Theme.ToggleAccent}):Play()
 			ToggleCallback(ToggleDefault)
 
-			Toggle.MouseButton1Down:Connect(function()
+			Toggle.MouseButton1Click:Connect(function()
 				ToggleDefault = not ToggleDefault
 				TweenService:Create(Dot, TweenInfo.new(0.15), {Position = (ToggleDefault and UDim2.fromScale(1,0.5) or UDim2.fromScale(0,0.5)) - UDim2.fromOffset(8,8), ImageColor3 = ToggleDefault and Theme.Toggle or Theme.ToggleAccent}):Play()
 				ToggleCallback(ToggleDefault)
